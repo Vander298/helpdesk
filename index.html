@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HelpDesk Fácil</title>
+  <style>
+/* ===== HelpDesk Fácil — tema escuro com detalhes em azul ===== */
+:root {
+  --fundo: #0b1220;
+  --painel: #111a2e;
+  --painel-2: #16223b;
+  --borda: #223052;
+  --texto: #e6ecf8;
+  --texto-suave: #8fa0c4;
+  --azul: #3b82f6;
+  --azul-claro: #7db0ff;
+  --azul-escuro: #1d4ed8;
+  --vermelho: #f0627a;
+  --verde: #4cc9a0;
+  --raio: 12px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+  background: var(--fundo);
+  color: var(--texto);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ----- Topo ----- */
+.topo {
+  border-bottom: 1px solid var(--borda);
+  background: linear-gradient(180deg, #0f1830, var(--fundo));
+}
+.marca {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.logo {
+  width: 48px; height: 48px;
+  display: grid; place-items: center;
+  border-radius: 12px;
+  background: var(--azul);
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 1px;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, .2);
+}
+.marca h1 { font-size: 1.5rem; }
+.marca p { color: var(--texto-suave); font-size: .9rem; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+/* ----- Dashboard ----- */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.card-info {
+  background: var(--painel);
+  border: 1px solid var(--borda);
+  border-left: 4px solid var(--azul);
+  border-radius: var(--raio);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+}
+.card-info .rotulo { color: var(--texto-suave); font-size: .85rem; }
+.card-info strong { font-size: 2.4rem; line-height: 1.15; color: var(--azul-claro); }
+.card-info small { color: var(--texto-suave); font-size: .8rem; }
+
+/* ----- Grade principal ----- */
+.grade {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+.painel {
+  background: var(--painel);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  padding: 22px;
+  min-width: 0;
+}
+.painel h2 { font-size: 1.1rem; margin-bottom: 4px; }
+.painel-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.dica { color: var(--texto-suave); font-size: .85rem; }
+
+/* ----- Formulário ----- */
+form label {
+  display: block;
+  margin: 14px 0 6px;
+  font-size: .85rem;
+  color: var(--texto-suave);
+}
+form label:first-of-type { margin-top: 12px; }
+input, textarea {
+  width: 100%;
+  background: var(--fundo);
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  color: var(--texto);
+  font: inherit;
+  padding: 10px 12px;
+  resize: vertical;
+}
+input:focus, textarea:focus, .btn:focus-visible {
+  outline: 2px solid var(--azul);
+  outline-offset: 2px;
+}
+.erro { color: var(--vermelho); font-size: .85rem; margin-top: 10px; }
+form .btn { margin-top: 16px; width: 100%; }
+
+/* ----- Botões ----- */
+.btn {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.btn-primario { background: var(--azul); color: #fff; }
+.btn-primario:hover { background: var(--azul-escuro); }
+.btn-secundario { background: transparent; color: var(--azul-claro); border-color: var(--azul); }
+.btn-secundario:hover { background: rgba(59, 130, 246, .12); }
+.btn-perigo { background: var(--vermelho); color: #1a0a10; }
+.btn-perigo:hover { background: #e24b66; }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ----- Listas (fila, pilha, atendidos) ----- */
+.lista { list-style: none; display: flex; flex-direction: column; gap: 10px; max-height: 420px; overflow-y: auto; }
+.item {
+  background: var(--painel-2);
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+.item .linha { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.item strong { overflow-wrap: anywhere; }
+.item p { color: var(--texto-suave); font-size: .88rem; margin-top: 4px; overflow-wrap: anywhere; }
+.item small { color: var(--texto-suave); font-size: .78rem; }
+
+/* Marcadores de posição na fila e na pilha */
+.marcador {
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, .18);
+  color: var(--azul-claro);
+  white-space: nowrap;
+}
+.item.destaque { border-color: var(--azul); box-shadow: inset 3px 0 0 var(--azul); }
+
+.tag-acao { font-weight: 700; }
+.tag-cadastro { color: var(--azul-claro); }
+.tag-atendimento { color: var(--verde); }
+
+.vazio {
+  color: var(--texto-suave);
+  font-size: .9rem;
+  text-align: center;
+  padding: 24px 8px;
+  border: 1px dashed var(--borda);
+  border-radius: 10px;
+}
+
+/* ----- Dialog ----- */
+dialog {
+  margin: auto;
+  width: min(440px, 92vw);
+  background: var(--painel);
+  color: var(--texto);
+  border: 1px solid var(--azul);
+  border-radius: var(--raio);
+  padding: 24px;
+}
+dialog::backdrop { background: rgba(3, 7, 18, .75); }
+dialog h3 { margin-bottom: 12px; }
+#detalheAcao { margin-bottom: 12px; }
+.acoes { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+
+/* ----- Aviso (toast) ----- */
+.aviso {
+  position: fixed;
+  left: 50%; bottom: 24px;
+  transform: translate(-50%, 20px);
+  background: var(--azul-escuro);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s, transform .2s;
+  z-index: 10;
+}
+.aviso.visivel { opacity: 1; transform: translate(-50%, 0); }
+
+/* ----- Responsivo ----- */
+@media (max-width: 900px) {
+  .dashboard { grid-template-columns: repeat(2, 1fr); }
+  .grade { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .container { padding: 16px; }
+  .marca { padding: 16px; }
+  .dashboard { gap: 10px; }
+  .card-info strong { font-size: 1.9rem; }
+  .painel-topo .btn { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+
+  </style>
+</head>
+<body>
+
+  <header class="topo">
+    <div class="marca">
+      <span class="logo" aria-hidden="true">HF</span>
+      <div>
+        <h1>HelpDesk Fácil</h1>
+        <p>Gerenciamento de chamados de suporte técnico</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- DASHBOARD -->
+    <section class="dashboard" aria-label="Resumo dos chamados">
+      <article class="card-info">
+        <span class="rotulo">Pendentes</span>
+        <strong id="qtdPendentes">0</strong>
+        <small>aguardando atendimento</small>
+      </article>
+      <article class="card-info">
+        <span class="rotulo">Atendidos</span>
+        <strong id="qtdAtendidos">0</strong>
+        <small>já resolvidos</small>
+      </article>
+      <article class="card-info">
+        <span class="rotulo">Total de chamados</span>
+        <strong id="qtdTotal">0</strong>
+        <small>cadastrados no sistema</small>
+      </article>
+      <article class="card-info">
+        <span class="rotulo">Ações no histórico</span>
+        <strong id="qtdHistorico">0</strong>
+        <small>que ainda podem ser desfeitas</small>
+      </article>
+    </section>
+
+    <div class="grade">
+
+      <!-- FORMULÁRIO -->
+      <section class="painel">
+        <h2>Novo chamado</h2>
+        <form id="formChamado" novalidate>
+          <label for="nome">Solicitante</label>
+          <input type="text" id="nome" maxlength="60" placeholder="Ex.: Maria Souza" required>
+
+          <label for="titulo">Título</label>
+          <input type="text" id="titulo" maxlength="80" placeholder="Ex.: Computador não liga" required>
+
+          <label for="descricao">Descrição do problema</label>
+          <textarea id="descricao" rows="4" maxlength="400" placeholder="Descreva o que está acontecendo" required></textarea>
+
+          <p id="erroForm" class="erro" role="alert" hidden></p>
+          <button type="submit" class="btn btn-primario">Cadastrar chamado</button>
+        </form>
+      </section>
+
+      <!-- FILA -->
+      <section class="painel">
+        <div class="painel-topo">
+          <div>
+            <h2>Chamados pendentes</h2>
+          </div>
+          <button id="btnAtender" class="btn btn-primario">Atender próximo</button>
+        </div>
+        <ol id="listaFila" class="lista"></ol>
+      </section>
+
+      <!-- HISTÓRICO (PILHA) -->
+      <section class="painel">
+        <div class="painel-topo">
+          <div>
+            <h2>Histórico de operações</h2>
+          </div>
+          <button id="btnVisualizar" class="btn btn-secundario">Ver última ação</button>
+        </div>
+        <ol id="listaHistorico" class="lista"></ol>
+      </section>
+
+      <!-- ATENDIDOS -->
+      <section class="painel">
+        <h2>Chamados atendidos</h2>
+        <ul id="listaAtendidos" class="lista"></ul>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Janela para visualizar e desfazer a última ação -->
+  <dialog id="dialogDesfazer">
+    <h3>Última ação registrada</h3>
+    <div id="detalheAcao"></div>
+    <p class="dica">Ao desfazer, o efeito dessa ação será revertido.</p>
+    <div class="acoes">
+      <button id="btnFechar" class="btn btn-secundario">Cancelar</button>
+      <button id="btnDesfazer" class="btn btn-perigo">Desfazer ação</button>
+    </div>
+  </dialog>
+
+  <div id="aviso" class="aviso" role="status" aria-live="polite"></div>
+
+  <script>
+/* ==========================================================================
+   HelpDesk Fácil — Fila (FIFO) e Pilha (LIFO) com arrays JavaScript puros
+   --------------------------------------------------------------------------
+   Estruturas do projeto:
+   - fila       -> chamados pendentes (FIFO). Entra no fim, sai do início.
+   - atendidos  -> lista dos chamados já resolvidos.
+   - historico  -> pilha de operações (LIFO). Entra e sai pelo topo.
+   Tudo é salvo no LocalStorage.
+   ========================================================================== */
+
+const CHAVE_STORAGE = "helpdesk-facil-dados";
+
+/* ---------- Estado da aplicação ---------- */
+let fila = [];        // Fila de atendimento (FIFO)
+let atendidos = [];   // Chamados já atendidos
+let historico = [];   // Pilha de operações (LIFO)
+let proximoId = 1;    // Gerador simples de identificadores
+
+/* ==========================================================================
+   OPERAÇÕES DA FILA (FIFO)
+   Usamos um array: o índice 0 é a FRENTE e o último índice é o FIM.
+   ========================================================================== */
+
+/** enqueue: insere um elemento no FIM da fila. */
+function enqueue(f, item) {
+  f.push(item); // push do array = inserir no final
+}
+
+/** dequeue: remove e retorna o elemento da FRENTE da fila (o mais antigo). */
+function dequeue(f) {
+  if (f.length === 0) return undefined; // fila vazia
+  return f.shift(); // shift do array = remover do início
+}
+
+/** Operações auxiliares usadas apenas pelo "desfazer" (ver explicação no README). */
+function inserirNaFrente(f, item) { f.unshift(item); } // devolve um chamado ao início da fila
+function removerDoFim(f) { return f.pop(); }           // retira o último que entrou na fila
+
+/* ==========================================================================
+   OPERAÇÕES DA PILHA (LIFO)
+   Usamos um array: o último índice é o TOPO da pilha.
+   ========================================================================== */
+
+/** push: empilha um elemento no TOPO. */
+function push(pilha, item) {
+  pilha.push(item);
+}
+
+/** pop: remove e retorna o elemento do TOPO (a última ação registrada). */
+function pop(pilha) {
+  if (pilha.length === 0) return undefined; // pilha vazia
+  return pilha.pop();
+}
+
+/** peek: apenas consulta o topo, sem remover. */
+function peek(pilha) {
+  return pilha.length === 0 ? undefined : pilha[pilha.length - 1];
+}
+
+/* ==========================================================================
+   REGRAS DO SISTEMA
+   ========================================================================== */
+
+/** Cadastra um chamado: enqueue na fila + push de "CADASTRO" no histórico. */
+function cadastrarChamado(nome, titulo, descricao) {
+  const chamado = {
+    id: proximoId++,
+    nome: nome,
+    titulo: titulo,
+    descricao: descricao,
+    criadoEm: new Date().toISOString(),
+    atendidoEm: null
+  };
+  enqueue(fila, chamado);
+  push(historico, { tipo: "CADASTRO", chamado: chamado, data: new Date().toISOString() });
+  salvar();
+  renderizar();
+  avisar("Chamado #" + chamado.id + " cadastrado.");
+}
+
+/** Atende o próximo: dequeue na fila + push de "ATENDIMENTO" no histórico. */
+function atenderProximo() {
+  const chamado = dequeue(fila);
+  if (!chamado) {
+    avisar("Não há chamados pendentes.");
+    return;
+  }
+  chamado.atendidoEm = new Date().toISOString();
+  atendidos.push(chamado);
+  push(historico, { tipo: "ATENDIMENTO", chamado: chamado, data: new Date().toISOString() });
+  salvar();
+  renderizar();
+  avisar("Chamado #" + chamado.id + " atendido.");
+}
+
+/**
+ * Desfaz a última ação: pop na pilha e reverte o efeito.
+ * Como a pilha é LIFO, a ação removida é sempre a mais recente, então o
+ * estado da fila e dos atendidos está consistente para revertê-la.
+ */
+function desfazerUltimaAcao() {
+  const acao = pop(historico);
+  if (!acao) {
+    avisar("Nenhuma ação para desfazer.");
+    return;
+  }
+  const id = acao.chamado.id;
+
+  if (acao.tipo === "CADASTRO") {
+    // Reverter um cadastro: o chamado é o último que entrou na fila -> sai pelo fim.
+    if (fila.length > 0 && fila[fila.length - 1].id === id) {
+      removerDoFim(fila);
+    } else {
+      fila = fila.filter(function (c) { return c.id !== id; }); // segurança
+    }
+    avisar("Cadastro do chamado #" + id + " desfeito.");
+  } else if (acao.tipo === "ATENDIMENTO") {
+    // Reverter um atendimento: o chamado volta para a FRENTE da fila.
+    atendidos = atendidos.filter(function (c) { return c.id !== id; });
+    acao.chamado.atendidoEm = null;
+    inserirNaFrente(fila, acao.chamado);
+    avisar("Atendimento do chamado #" + id + " desfeito.");
+  }
+  salvar();
+  renderizar();
+}
+
+/* ==========================================================================
+   LOCALSTORAGE
+   ========================================================================== */
+
+/** Salva o estado completo no navegador. */
+function salvar() {
+  try {
+    localStorage.setItem(CHAVE_STORAGE, JSON.stringify({
+      fila: fila, atendidos: atendidos, historico: historico, proximoId: proximoId
+    }));
+  } catch (e) {
+    console.error("Não foi possível salvar no LocalStorage:", e);
+  }
+}
+
+/** Carrega o estado salvo (se existir e estiver válido). */
+function carregar() {
+  try {
+    const bruto = localStorage.getItem(CHAVE_STORAGE);
+    if (!bruto) return;
+    const dados = JSON.parse(bruto);
+    if (Array.isArray(dados.fila)) fila = dados.fila;
+    if (Array.isArray(dados.atendidos)) atendidos = dados.atendidos;
+    if (Array.isArray(dados.historico)) historico = dados.historico;
+    if (Number.isInteger(dados.proximoId)) proximoId = dados.proximoId;
+  } catch (e) {
+    console.error("Dados salvos inválidos, iniciando vazio:", e);
+  }
+}
+
+/* ==========================================================================
+   INTERFACE (renderização)
+   ========================================================================== */
+
+/** Cria um elemento com classe e texto (textContent evita injeção de HTML). */
+function criar(tag, classe, texto) {
+  const e = document.createElement(tag);
+  if (classe) e.className = classe;
+  if (texto !== undefined) e.textContent = texto;
+  return e;
+}
+
+function formatarData(iso) {
+  return new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
+}
+
+function mostrarVazio(lista, mensagem) {
+  const li = criar("li", "vazio", mensagem);
+  lista.appendChild(li);
+}
+
+/** Desenha dashboard, fila, pilha e atendidos a partir do estado atual. */
+function renderizar() {
+  // Dashboard
+  document.getElementById("qtdPendentes").textContent = fila.length;
+  document.getElementById("qtdAtendidos").textContent = atendidos.length;
+  document.getElementById("qtdTotal").textContent = fila.length + atendidos.length;
+  document.getElementById("qtdHistorico").textContent = historico.length;
+
+  document.getElementById("btnAtender").disabled = fila.length === 0;
+  document.getElementById("btnVisualizar").disabled = historico.length === 0;
+
+  // Fila: índice 0 = FRENTE
+  const listaFila = document.getElementById("listaFila");
+  listaFila.innerHTML = "";
+  if (fila.length === 0) mostrarVazio(listaFila, "Nenhum chamado pendente.");
+  fila.forEach(function (c, i) {
+    const li = criar("li", "item" + (i === 0 ? " destaque" : ""));
+    const linha = criar("div", "linha");
+    linha.appendChild(criar("strong", "", "#" + c.id + " " + c.titulo));
+    let pos = "Posição " + (i + 1);
+    if (i === 0) pos = "FRENTE";
+    else if (i === fila.length - 1) pos = "FIM";
+    linha.appendChild(criar("span", "marcador", pos));
+    li.appendChild(linha);
+    li.appendChild(criar("p", "", c.descricao));
+    li.appendChild(criar("small", "", c.nome + " • " + formatarData(c.criadoEm)));
+    listaFila.appendChild(li);
+  });
+
+  // Pilha: percorremos de trás para frente para mostrar o TOPO primeiro
+  const listaHist = document.getElementById("listaHistorico");
+  listaHist.innerHTML = "";
+  if (historico.length === 0) mostrarVazio(listaHist, "Nenhuma operação registrada.");
+  for (let i = historico.length - 1; i >= 0; i--) {
+    const a = historico[i];
+    const li = criar("li", "item" + (i === historico.length - 1 ? " destaque" : ""));
+    const linha = criar("div", "linha");
+    const tipoTexto = a.tipo === "CADASTRO" ? "Cadastro" : "Atendimento";
+    const tag = criar("span", "tag-acao " + (a.tipo === "CADASTRO" ? "tag-cadastro" : "tag-atendimento"), tipoTexto);
+    linha.appendChild(tag);
+    if (i === historico.length - 1) linha.appendChild(criar("span", "marcador", "TOPO"));
+    li.appendChild(linha);
+    li.appendChild(criar("p", "", "#" + a.chamado.id + " " + a.chamado.titulo));
+    li.appendChild(criar("small", "", formatarData(a.data)));
+    listaHist.appendChild(li);
+  }
+
+  // Atendidos: mais recente primeiro
+  const listaAt = document.getElementById("listaAtendidos");
+  listaAt.innerHTML = "";
+  if (atendidos.length === 0) mostrarVazio(listaAt, "Nenhum chamado atendido ainda.");
+  for (let i = atendidos.length - 1; i >= 0; i--) {
+    const c = atendidos[i];
+    const li = criar("li", "item");
+    li.appendChild(criar("strong", "", "#" + c.id + " " + c.titulo));
+    li.appendChild(criar("p", "", c.descricao));
+    li.appendChild(criar("small", "", c.nome + " • atendido em " + formatarData(c.atendidoEm)));
+    listaAt.appendChild(li);
+  }
+}
+
+/** Mensagem rápida na parte inferior da tela. */
+let temporizadorAviso;
+function avisar(texto) {
+  const aviso = document.getElementById("aviso");
+  aviso.textContent = texto;
+  aviso.classList.add("visivel");
+  clearTimeout(temporizadorAviso);
+  temporizadorAviso = setTimeout(function () { aviso.classList.remove("visivel"); }, 2500);
+}
+
+/* ==========================================================================
+   EVENTOS
+   ========================================================================== */
+
+document.getElementById("formChamado").addEventListener("submit", function (ev) {
+  ev.preventDefault();
+  const nome = document.getElementById("nome").value.trim();
+  const titulo = document.getElementById("titulo").value.trim();
+  const descricao = document.getElementById("descricao").value.trim();
+  const erro = document.getElementById("erroForm");
+
+  if (!nome || !titulo || !descricao) {
+    erro.textContent = "Preencha solicitante, título e descrição para cadastrar.";
+    erro.hidden = false;
+    return;
+  }
+  erro.hidden = true;
+  cadastrarChamado(nome, titulo, descricao);
+  ev.target.reset();
+  document.getElementById("nome").focus();
+});
+
+document.getElementById("btnAtender").addEventListener("click", atenderProximo);
+
+/** Abre a janela mostrando o topo da pilha (peek), sem remover nada. */
+document.getElementById("btnVisualizar").addEventListener("click", function () {
+  const topo = peek(historico);
+  if (!topo) return;
+  const detalhe = document.getElementById("detalheAcao");
+  detalhe.innerHTML = "";
+  detalhe.appendChild(criar("p", "", (topo.tipo === "CADASTRO" ? "Cadastro" : "Atendimento") + " do chamado #" + topo.chamado.id));
+  detalhe.appendChild(criar("p", "dica", topo.chamado.titulo + " — " + topo.chamado.nome));
+  detalhe.appendChild(criar("p", "dica", "Registrado em " + formatarData(topo.data)));
+  document.getElementById("dialogDesfazer").showModal();
+});
+
+document.getElementById("btnFechar").addEventListener("click", function () {
+  document.getElementById("dialogDesfazer").close();
+});
+
+document.getElementById("btnDesfazer").addEventListener("click", function () {
+  document.getElementById("dialogDesfazer").close();
+  desfazerUltimaAcao();
+});
+
+/* ---------- Inicialização ---------- */
+carregar();
+renderizar();
+
+  </script>
+</body>
+</html>
